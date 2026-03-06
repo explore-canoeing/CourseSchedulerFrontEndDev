@@ -553,8 +553,12 @@
 
           fetch(fetchUrl)
             .then(response => response.json())
-            .then(data => {
-              displayRegistrationForm(data); 
+            .then(result => {
+              if( result.status === "ERROR" ) {
+                showError( result.errorMessage, result.errorSubject );
+              } else {
+                displayRegistrationForm( result.data ); 
+              }
             })
             .catch(showErrorUI);
         }
@@ -733,6 +737,16 @@
         showView( VIEWS.SUCCESS );
       }
 
+      function showError( errorMessage, errorSubject )
+      {
+        document.getElementById('error-text').innerText = errorMessage;
+        const mailLink = document.getElementById('errorMailLink');
+        const subject = encodeURIComponent(`Error registering for course: ${errorSubject}` );
+        mailLink.href = `mailto:matt@explorecanoeing.com?subject=${subject}`;
+
+        showView(VIEWS.ERROR);
+      }
+
       function showErrorUI(error)
       {
         const courseIdInput = document.getElementsByName("courseId")[0];
@@ -750,12 +764,7 @@
           subject = errorMsg;
         }
 
-        document.getElementById('error-text').innerText = errorMsg;
-        const mailLink = document.getElementById('errorMailLink');
-        subject = encodeURIComponent(`Error registering for course: ${subject}` );
-        mailLink.href = `mailto:matt@explorecanoeing.com?subject=${subject}`;
-
-        showView(VIEWS.ERROR);
+        showError( errorMsg, subject );
       }
     </script>
   </body>
