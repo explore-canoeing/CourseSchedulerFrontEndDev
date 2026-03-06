@@ -691,7 +691,7 @@
         return true;
       }
 
-      function runSubmit(btn)
+      async function runSubmit(btn)
       {
         const form = document.getElementById('regForm');
 
@@ -718,18 +718,30 @@
         const data = {};
         new FormData(form).forEach((value, key) => data[key] = value);
 
-        google.script.run
-          .withSuccessHandler(function(response) {
-            if( response.status === "REDIRECT" && response.squareRedirectUrl ) {
-              document.getElementById('square-link').href = response.squareRedirectUrl;
-              showView( VIEWS.PAYMENT );
-            } else {
-              // No payment is needed.
-              showView(VIEWS.SUCCESS);
-            }
-          })
-          .withFailureHandler(showErrorUI)
-          .registerStudentHandler(data);
+        try {
+          const response = await fetch(`${PROXY_URL}?action=registerStudent`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data) // Send the student info
+          });
+
+          if( !response.ok ) {
+            throw new Error("Network response was not ok");
+          }
+          
+          const result = await response.json();
+
+          if( result.status === "REDIRECT" && result.squareRedirectUrl ) {
+            document.getElementById('square-link').href = result.squareRedirectUrl;
+            showView( VIEWS.PAYMENT );
+          } else if( result.status === "SUCCESS" ) {
+            showView( VIEWS.SUCCESS );
+          } else {
+            showError( result.errorMessage, result.errorSubject );
+          }
+        } catch( err ) {
+          showError("We couldn't connect to the registration server. Please try again.", "Network Error" );
+        }
       }
 
       function showTimeoutUI(response)
