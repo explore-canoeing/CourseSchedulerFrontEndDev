@@ -199,13 +199,13 @@
     </div>
     <div class="form-card">
       <!-- VIEW 0: The initial spinner waiting for the form to load for the first time -->
-      <div id="initial-spinner" style="display: <?= (viewState === 'INITIALIZING') ? 'block' : 'none' ?>; text-align:center; padding: 60px 20px;">
+      <div id="initial-spinner" style="display: block; text-align:center; padding: 60px 20px;">
         <div class="spinner"></div>
         <p class="flashing-text">Getting things ready...</p>
       </div>
       
       <!-- VIEW 1: The user input form -->
-      <div id="form-content" style="display: <?= (viewState === 'FORM') ? 'block' : 'none' ?>;">
+      <div id="form-content" style="display: none;">
         <h2 style="text-align: center;">Course Registration</h2>
 
         <!-- Course info: 16px for readability on phone, crisp on Mac -->
@@ -491,14 +491,14 @@
       </div>
 
       <!-- VIEW 4: Finalizing registration spinner -->
-      <div id="finalizing-spinner" style="display: <?= (viewState === 'FINALIZING') ? 'block' : 'none' ?>; text-align:center; padding: 60px 20px;">
+      <div id="finalizing-spinner" style="display: none; text-align:center; padding: 60px 20px;">
         <div class="spinner"></div>
         <p class="flashing-text">Finishing registration...</p>
         <p style="font-size: 13px; color: #999;">Please do not refresh this page</p>
       </div>
 
       <!-- VIEW 5. The error view -->
-      <div id="error-message" style="display: <?= (viewState === 'ERROR') ? 'block' : 'none' ?>; text-align: center; padding: 40px 0;">
+      <div id="error-message" style="display: none; text-align: center; padding: 40px 0;">
         <p id="error-text" style="color: black; font-size: 1.1rem; margin-top: 20px;">
         </p>
         <p>Please contact
@@ -509,7 +509,7 @@
       </div>
 
       <!-- VIEW 6: Success view -->
-      <div id="success-message" style="display: <?= (viewState === 'SUCCESS') ? 'block' : 'none' ?>; text-align: center; padding: 40px 0;">
+      <div id="success-message" style="display: none; text-align: center; padding: 40px 0;">
         <h3 style="color: var(--brand-color); font-weight: 700;">Registration Confirmed</h3>
         <p style="color: black; font-size: 1.1rem; margin-top: 20px;">
           Thank you for signing up. You will receive a confirmation email shortly.
@@ -537,21 +537,26 @@
         PAYMENT_TIMEOUT:    document.getElementById('payment-timeout-message')
       };
 
+      const PROXY_URL = "https://square-to-google-proxy.matt-b33.workers.dev/";
+
       window.onload = function()
       {
-        const state = "<?= viewState ?>";
-        const params = JSON.parse( '<?!= initialParams ?>' );
-        const csrfToken = "<?= csrfToken ?>";
+        const urlParams = new URLSearchParams(window.location.search);
+        const txid = urlParams.get('txid');
 
-        if( state === 'FINALIZING' && params.txid ) {
+        if( txid ) {
           // Wait for the payment to be confirmed.
-          pollForPayment( params.txid );
+          pollForPayment( txid );
         } else {
-          // Must be initial load
-          google.script.run
-            .withSuccessHandler( displayRegistrationForm )
-            .withFailureHandler( showErrorUI )
-            .createForm( params, csrfToken );
+          const params = Object.fromEntries( urlParams.entries() );
+          const fetchUrl = `${PROXY_URL}?action=createForm&params=${encodeURIComponent(JSON.stringify(params))}`;
+
+          fetch(fetchUrl)
+            .then(response => response.json())
+            .then(data => {
+              displayRegistrationForm(data); 
+            })
+            .catch(showErrorUI);
         }
       }
 
