@@ -549,6 +549,7 @@
 
         if( action && txid && action === "awaitPayment" ) {
           // Wait for the payment to be confirmed.
+          showView( VIEWS.FINALIZING_SPINNER );
           pollForPayment( txid );
         } else {
           const params = Object.fromEntries( urlParams.entries() );
