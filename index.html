@@ -204,27 +204,45 @@
 
       @media (max-width: 600px) {
         body {
-            padding: 10px 5px; /* Minimal padding on sides */
+            padding: 20px 15px; /* Gives space above and below the card */
         }
 
         .form-card {
-            padding: 15px; /* More space for the form content */
-            display: block; /* Change from flex to block to prevent layout squishing */
-            border-radius: 0; /* Optional: square edges look better on tiny screens */
-            box-shadow: none; /* Optional: remove shadow to save visual space */
+            padding: 25px 20px; /* Comfortable inner spacing */
+            display: block; 
+            
+            /* RESTORE FLOATING LOOK */
+            border-radius: 12px; /* Keep corners rounded */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Soft shadow */
+            width: 100%; /* Card stays wide but doesn't hit edges because of body padding */
         }
 
-        /* Make sure the course info table doesn't force a minimum width */
-        table {
-            font-size: 14px; 
+        /* Improve table layout so it doesn't squish */
+        table tr {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
         }
         
-        /* Ensure radio options don't wrap weirdly */
+        table td {
+            text-align: left !important;
+            width: 100% !important;
+            padding: 2px 0 !important;
+        }
+
+        .row {
+            gap: 0;
+        }
+
+        .col {
+            min-width: 100%;
+        }
+
         .radio-group {
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
-      } 
+      }
 
     </style>
   </head>
