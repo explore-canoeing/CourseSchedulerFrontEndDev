@@ -225,10 +225,8 @@
         }
 
         .form-card {
-            padding: 25px 20px; /* Comfortable inner spacing */
+            padding: 20px 15px; /* Comfortable inner spacing */
             display: block; 
-            
-            /* RESTORE FLOATING LOOK */
             border-radius: 12px; /* Keep corners rounded */
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Soft shadow */
             width: 100%; /* Card stays wide but doesn't hit edges because of body padding */
@@ -252,7 +250,9 @@
         }
 
         .col {
-            min-width: 100%;
+            min-width: 0 !important;
+            width: 100% !important;
+            flex: 1 1 100%;
         }
 
         .radio-group {
