@@ -539,6 +539,18 @@
           Your payment is being verified. You can close this window; you will receive a confirmation email as soon as the process completes.
         </p>
       </div>
+
+      <!-- VIEW 8: Payment explicitly canceled/failed view -->
+      <div id="payment-timeout-message" style="display: none; text-align: center; padding: 40px 0;">
+        <h3 style="color: var(--brand-color); font-weight: 700;">Payment Failed</h3>
+        <p style="color: black; font-size: 1.1rem; margin-top: 20px;">
+          Your payment was not successful. Please contact
+            <a href="mailto:matt@explorecanoeing.com?subject=Payment Failed" style="color: var(--brand-color); text-decoration: underline; font-weight: 700;">
+              matt@explorecanoeing.com
+            </a>
+            for assistance.</p>
+        </p>
+      </div>
     </div>
 
     <script>
@@ -550,7 +562,8 @@
         FINALIZING_SPINNER: document.getElementById('finalizing-spinner'),
         ERROR:              document.getElementById('error-message'),
         SUCCESS:            document.getElementById('success-message'),
-        PAYMENT_TIMEOUT:    document.getElementById('payment-timeout-message')
+        PAYMENT_TIMEOUT:    document.getElementById('payment-timeout-message'),
+        PAYMENT_FAILED:    document.getElementById('payment-failed-message')
       };
 
       const PROXY_URL = "https://square-to-google-proxy.matt-b33.workers.dev/";
@@ -597,11 +610,16 @@
             if( result.status === "SUCCESS" ) {
               if( result.data === "PAID") {
                 showView( VIEWS.SUCCESS );
-              } else if( paymentPollAttempts < 15 ) {
-                // Try again in 2 seconds
-                setTimeout(() => pollForPayment(txId), 2000);
+              } else if( result.data === "PENDING" ) {
+                if( paymentPollAttempts < 15 ) {
+                  // Try again in 2 seconds
+                  setTimeout(() => pollForPayment(txId), 2000);
+                } else {
+                  showView( VIEWS.PAYMENT_TIMEOUT );
+                }
               } else {
-                showView( VIEWS.PAYMENT_TIMEOUT );
+                // The payment was cancelled or failed.
+                showView( VIEWS.PAYMENT_FAILED );
               }
             } else {
               showError( result.errorMessage, result.errorSubject );
