@@ -195,13 +195,21 @@
         margin: 0 auto 15px auto; /* auto left/right centers it */
       }
 
-      #initial-spinner, #register-spinner, #finalizing-spinner {
+      #error-message,
+      #success-message,
+      #payment-cta,
+      #payment-timeout-message,
+      #payment-failed-message,
+      #initial-spinner,
+      #register-spinner,
+      #finalizing-spinner {
         width: 100%;
-        display: flex;
+        display: none;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         text-align: center;
+        box-sizing: border-box;
       }
 
       /* The "Pulse" for the text */
