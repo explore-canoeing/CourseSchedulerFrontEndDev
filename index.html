@@ -228,6 +228,19 @@
         font-weight: bold;
       }
 
+      /* Target the first <td> in every <tr> of your info table */
+      table td:first-child {
+        white-space: nowrap;  /* The "Hammer": prevents wrapping completely */
+        width: 1%;            /* The "Shrink-Wrap": fits the cell to the text only */
+        padding-right: 30px;  /* The "Gutter": ensures a clean gap from the value */
+      }
+
+        /* Ensure the second <td> (the values) takes all remaining space */
+      table td:last-child {
+        width: auto;
+        text-align: right;
+      }
+
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
