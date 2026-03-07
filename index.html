@@ -499,6 +499,20 @@
         <p style="font-size: 13px; color: #999;">Please do not refresh this page</p>
       </div>
 
+      <script>
+        // IMMEDIATE EXECUTION: Check the URL before the page renders to show the correct spinner.
+        (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = params.get('action');
+
+        if( action && action === "awaitPayment" ) {
+          // If Square sent them back, swap the spinners INSTANTLY
+          document.getElementById('initial-spinner').style.display = 'none';
+          document.getElementById('finalizing-spinner').style.display = 'block';
+        }
+        })();
+      </script>
+
       <!-- VIEW 5. The error view -->
       <div id="error-message" style="display: none; text-align: center; padding: 40px 0;">
         <p id="error-text" style="color: black; font-size: 1.1rem; margin-top: 20px;">
