@@ -247,19 +247,27 @@
             padding: 2px 0 !important;
         }
 
-        .row {
-            gap: 0;
-        }
-
-        .col {
-            min-width: 0 !important;
-            width: 100% !important;
-            flex: 1 1 100%;
-        }
-
         .radio-group {
             flex-direction: column;
             gap: 12px;
+        }
+
+        .row {
+            display: block; /* Switch from flex to block to force vertical stacking */
+        }
+
+        .col {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            margin-bottom: 15px; /* Adds breathing room between City and Province */
+            flex: none !important; /* Disables the 'flex: 2' logic on mobile */
+        }
+
+        /* Remove the inline style 'flex: 2' influence on mobile */
+        [style*="flex: 2"] {
+            flex: none !important;
+            width: 100% !important;
         }
       }
 
