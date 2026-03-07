@@ -294,6 +294,25 @@
             flex: none !important; /* Disables the 'flex: 2' logic on mobile */
         }
 
+        /* Force the Cost row cells to stack vertically like the others */
+        #course-has-cost td {
+            display: block !important;
+            width: 100% !important;
+            text-align: left !important;
+            padding: 2px 0 !important;
+        }
+        
+        /* Add a little gap below the label 'Cost:' */
+        #course-has-cost td:first-child {
+            margin-bottom: 0;
+        }
+
+        /* Add spacing below the price so it doesn't touch the next section */
+        #course-cost {
+            margin-bottom: 12px;
+            color: #333;
+        }
+
         /* Remove the inline style 'flex: 2' influence on mobile */
         [style*="flex: 2"] {
             flex: none !important;
