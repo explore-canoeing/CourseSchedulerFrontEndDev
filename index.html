@@ -545,8 +545,9 @@
       {
         const urlParams = new URLSearchParams(window.location.search);
         const txid = urlParams.get('txid');
+        const action = urlParams.get('action');
 
-        if( txid ) {
+        if( action && txid && action === "awaitPayment" ) {
           // Wait for the payment to be confirmed.
           pollForPayment( txid );
         } else {
@@ -570,19 +571,35 @@
       function pollForPayment( txId )
       {
         paymentPollAttempts++;
+        const url = `${PROXY_URL}?action=checkStatus&txid=${txId}`;
 
-        google.script.run
-          .withSuccessHandler(function(response) {
-            if( response === "PAID" ) {
-              showView( VIEWS.SUCCESS );
-            } else if( paymentPollAttempts < 15 ) {
-              setTimeout( function() { pollForPayment(txId); }, 2000 ); // Ping again
+        fetch(url)
+          .then(response => {
+            if( !response.ok ) throw new Error( "Connection failed" );
+            return response.json();
+          })
+          .then(result => {
+            if( result.status === "SUCCESS" ) {
+              if( result.data === "PAID") {
+                showView( VIEWS.SUCCESS );
+              } else if( paymentPollAttempts < 15 ) {
+                // Try again in 2 seconds
+                setTimeout(() => pollForPayment(txId), 2000);
+              } else {
+                showView( VIEWS.PAYMENT_TIMEOUT );
+              }
+            } else {
+              showError( result.errorMessage, result.errorSubject );
+            }
+          })
+          .catch(error => {
+            // Even on network error, keep trying until the limit...
+            if( paymentPollAttempts < 15 ) {
+              setTimeout(() => pollForPayment(txId), 2000);
             } else {
               showView( VIEWS.PAYMENT_TIMEOUT );
             }
-          })
-          .withFailureHandler( showErrorUI )
-          .checkPaymentStatus( txId );
+          });
       }
 
       function displayRegistrationForm( data )
@@ -743,12 +760,6 @@
         } catch( err ) {
           showError("We couldn't connect to the registration server. Please try again.", "Network Error" );
         }
-      }
-
-      function showTimeoutUI(response)
-      {
-        // TODO
-        showView( VIEWS.SUCCESS );
       }
 
       function showError( errorMessage, errorSubject )
