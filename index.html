@@ -701,7 +701,6 @@
 
       window.onload = function()
       {
-        console.log( "*************** HERE *****************" );
         const urlParams = new URLSearchParams(window.location.search);
         const txid = urlParams.get('txid');
         const action = urlParams.get('action');
@@ -711,15 +710,21 @@
           showView( VIEWS.FINALIZING_SPINNER );
           pollForPayment( txid );
         } else {
+          console.log( "*************** HERE1 *****************" );
           const params = Object.fromEntries( urlParams.entries() );
+          console.log( "*************** HERE2 *****************" );
           const fetchUrl = `${PROXY_URL}?action=createForm&params=${encodeURIComponent(JSON.stringify(params))}`;
+          console.log( "*************** HERE3 *****************" );
 
           fetch(fetchUrl)
             .then(response => response.json())
             .then(result => {
+              console.log( "*************** HERE4 *****************" );
               if( result.status === "ERROR" ) {
+                console.log( "*************** HERE5 *****************" );
                 showError( result.errorMessage, result.errorSubject );
               } else {
+                console.log( "*************** HERE6 *****************" );
                 displayRegistrationForm( result.data ); 
               }
             })
