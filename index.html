@@ -774,9 +774,10 @@
         document.getElementById('course-start-time').innerText = data.course.startTime;
         document.getElementById('course-end-date').innerText = data.course.endDate;
         document.getElementById('course-location').innerText = data.course.location;
+        const courseCost = parseFloat( data.course.cost ) || 0;
 
-        if( data.course.cost && data.course.cost > 0 ) {
-          document.getElementById('course-cost').innerText = `$${data.course.cost.toFixed(2)}`;
+        if( courseCost > 0 ) {
+          document.getElementById('course-cost').innerText = `$${courseCost.toFixed(2)}`;
           document.getElementById('course-has-cost').style.display = 'table-row';
           document.getElementById('submit-button').innerText = "Continue";
         } else {
