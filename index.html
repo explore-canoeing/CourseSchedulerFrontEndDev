@@ -341,27 +341,23 @@
         <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin: 20px 0; border-top: 1px solid #eeeeee; border-bottom: 1px solid #eeeeee; padding: 12px 0;">
           <tr>
             <td style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Course:</td>
-            <td id="course-title" style="text-align: right; color: #666666; padding: 6px 0; vertical-align: top;">Loading...</td>
-          </tr>
-          <tr>
-            <td style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Start Date:</td>
-            <td id="course-start-date" style="text-align: right; color: #666666; padding: 6px 0; vertical-align: top;">Loading...</td>
-          </tr>
-          <tr>
-            <td style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Start Time:</td>
-            <td id="course-start-time" style="text-align: right; color: #666666; padding: 6px 0; vertical-align: top;">Loading...</td>
-          </tr>
-          <tr>
-            <td style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">End Date:</td>
-            <td id="course-end-date" style="text-align: right; color: #666666; padding: 6px 0; vertical-align: top;">Loading...</td>
-          </tr>
-          <tr>
-            <td style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Location:</td>
-            <td id="course-location" style="text-align: right; color: #666666; padding: 6px 0; vertical-align: top;">Loading...</td>
+            <td id="course-title" style="text-align: left; color: #666666; padding: 6px 0 6px 24px; vertical-align: top;">Loading...</td>
           </tr>
           <tr id="course-has-cost" style="display: none;">
             <td style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Cost:</td>
-            <td id="course-cost" style="text-align: right; color: #666666; padding: 6px 0; vertical-align: top;">Loading...</td>
+            <td id="course-cost" style="text-align: left; color: #666666; padding: 6px 0 6px 24px; vertical-align: top;">Loading...</td>
+          </tr>
+          <tr>
+            <td id="course-date-label" style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Dates:</td>
+            <td id="course-date" style="text-align: left; color: #666666; padding: 6px 0 6px 24px; vertical-align: top;">Loading...</td>
+          </tr>
+          <tr>
+            <td id="course-start-time-label" style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Start Time:</td>
+            <td id="course-start-time" style="text-align: left; color: #666666; padding: 6px 0 6px 24px; vertical-align: top;">Loading...</td>
+          </tr>
+          <tr>
+            <td style="font-weight: bold; color: #546e7a; padding: 6px 0; vertical-align: top;">Location:</td>
+            <td id="course-location" style="text-align: left; color: #666666; padding: 6px 0 6px 24px; vertical-align: top;">Loading...</td>
           </tr>
         </table>
 
@@ -546,7 +542,6 @@
             <label class="required-label" style="margin-bottom: 15px; display: block; line-height: 1.5;">
               I allow Explore Canoeing to use photographs and/or videos of me for use in official Explore Canoeing material, including but not limited to publications, communications, advertisements, and other materials in any format (print, digital, or otherwise).
             </label>
-          
             <div class="radio-group">
               <label class="radio-option">
                 <input type="radio" name="photoConsent" value="Yes" required> Yes
@@ -704,7 +699,7 @@
         PAYMENT_FAILED:    document.getElementById('payment-failed-message')
       };
 
-      const PROXY_URL = "https://square-to-google-proxy.matt-b33.workers.dev/";
+      const PROXY_URL = "https://explore-canoeing-proxy-prod.matt-b33.workers.dev/";
 
       window.onload = function()
       {
@@ -776,9 +771,16 @@
       function displayRegistrationForm( data )
       {
         document.getElementById('course-title').innerText = data.course.title;
-        document.getElementById('course-start-date').innerText = data.course.startDate;
+        if( data.course.startDate === data.course.endDate ) {
+            document.getElementById('course-start-time-label').innerText = "Start Time:";
+            document.getElementById('course-date-label').innerText = "Date:";
+            document.getElementById('course-date').innerText = data.course.startDate;
+        } else {
+            document.getElementById('course-start-time-label').innerText = "Daily Start Time:";
+            document.getElementById('course-date-label').innerText = "Dates:";
+            document.getElementById('course-date').innerText = `${data.course.startDate} - ${data.course.endDate}`;
+        }
         document.getElementById('course-start-time').innerText = data.course.startTime;
-        document.getElementById('course-end-date').innerText = data.course.endDate;
         document.getElementById('course-location').innerText = data.course.location;
         const courseCost = parseFloat( data.course.cost ) || 0;
 
